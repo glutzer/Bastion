@@ -1,0 +1,13 @@
+{
+    "type": "code",
+    "modid": "bastion",
+    "name": "Bastion",
+    "authors": [
+        "sneezerstein"
+    ],
+    "description": "Adds tools for civilization.",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": ""
+    }
+}
