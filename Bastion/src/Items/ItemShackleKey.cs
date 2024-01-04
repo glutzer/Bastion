@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
@@ -24,7 +24,8 @@ public class ItemShackleKey : Item
         capi = api as ICoreClientAPI;
         sapi = api as ICoreServerAPI;
 
-        maxMs = Attributes["maxSeconds"].AsInt(1000) * 1000;
+        //maxMs = Attributes["maxSeconds"].AsInt(1000) * 1000;
+        maxMs = BConfig.Loaded.maxSeconds * 1000;
     }
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
@@ -68,7 +69,7 @@ public class ItemShackleKey : Item
 
                         if (currentMs >= maxMs) return true;
 
-                        currentMs += 1000 * 60 * 10; // 10 minutes, set configuration somewhere?
+                        currentMs += 1000 * BConfig.Loaded.temporalGearSeconds; // 10 minutes, set configuration somewhere?
 
                         if (currentMs > maxMs) currentMs = maxMs;
 
@@ -77,6 +78,7 @@ public class ItemShackleKey : Item
                         s.TakeOut(1);
                         s.MarkDirty();
                         slot.MarkDirty();
+                        byEntity.World.PlaySoundAt(new AssetLocation("sounds/effect/portal.ogg"), byEntity, null, true);
 
                         return true;
                     }
@@ -133,5 +135,10 @@ public class ItemShackleKey : Item
                 slot.MarkDirty();
             }
         }
+    }
+
+    public override void InGuiIdle(IWorldAccessor world, ItemStack stack)
+    {
+        GuiTransform.Rotation.Y = GameMath.Mod((float)world.ElapsedMilliseconds / 50f, 360f);
     }
 }

@@ -24,4 +24,9 @@ public class ShackleInfo
         orgSpawnY = (int)spawn.Y;
         orgSpawnZ = (int)spawn.Z;
     }
+
+    public ShackleInfo()
+    {
+
+    }
 }

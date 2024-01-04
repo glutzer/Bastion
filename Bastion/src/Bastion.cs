@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -15,6 +16,8 @@ public class Bastion : ModSystem
 
     public ICoreAPI api;
     public ICoreServerAPI sapi;
+
+    public bool currentlyShackled = false;
 
     public override void Start(ICoreAPI api)
     {
@@ -75,7 +78,7 @@ public class Bastion : ModSystem
             {
                 if (slot?.Itemstack?.Item is ItemShackle)
                 {
-                    AddShackle(byPlayer, 600); // 10 minutes.
+                    AddShackle(byPlayer, BConfig.Loaded.initialShackleSeconds);
 
                     slot.TakeOutWhole();
 
@@ -211,9 +214,9 @@ public class Bastion : ModSystem
             nameToUid = SerializerUtil.Deserialize<Dictionary<string, string>>(nameToUidData);
             offlinePlayerData = SerializerUtil.Deserialize<Dictionary<string, ShackleInfo>>(offlinePlayerDataData);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-
+            Console.WriteLine(e);
         }
     }
 
@@ -222,5 +225,26 @@ public class Bastion : ModSystem
         sapi.WorldManager.SaveGame.StoreData("activeShackles", SerializerUtil.Serialize(activeShackles));
         sapi.WorldManager.SaveGame.StoreData("nameToUid", SerializerUtil.Serialize(nameToUid));
         sapi.WorldManager.SaveGame.StoreData("offlinePlayerData", SerializerUtil.Serialize(offlinePlayerData));
+    }
+
+    public override void StartPre(ICoreAPI api)
+    {
+        string cfgFileName = "bastion.json";
+        try
+        {
+            BConfig fromDisk;
+            if ((fromDisk = api.LoadModConfig<BConfig>(cfgFileName)) == null)
+            {
+                api.StoreModConfig(BConfig.Loaded, cfgFileName);
+            }
+            else
+            {
+                BConfig.Loaded = fromDisk;
+            }
+        }
+        catch
+        {
+            api.StoreModConfig(BConfig.Loaded, cfgFileName);
+        }
     }
 }

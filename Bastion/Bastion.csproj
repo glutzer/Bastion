@@ -56,6 +56,7 @@
   <None Remove="assets\bastionmod\itemtypes\shackle.json" />
   <None Remove="assets\bastionmod\itemtypes\shacklekey.json" />
   <None Remove="assets\bastionmod\patches\entitypatch.json" />
+  <None Remove="assets\bastionmod\recipes\grid\shackle.json" />
   <None Remove="assets\bastionmod\shapes\shackle.json" />
   <None Remove="assets\bastionmod\shapes\shacklekey.json" />
   <Content Include="modinfo.json">
